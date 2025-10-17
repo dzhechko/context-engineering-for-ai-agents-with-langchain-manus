@@ -38,17 +38,21 @@
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --link-color: #2563eb;
         }
 
         [data-theme="dark"] {
             --text-primary: #f9fafb;
             --text-secondary: #d1d5db;
-            --bg-primary: #111827;
-            --bg-secondary: #1f2937;
-            --bg-tertiary: #374151;
-            --border-color: #4b5563;
-            --code-bg: #0f172a;
-            --highlight-bg: #713f12;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --border-color: #475569;
+            --code-bg: #020617;
+            --code-text: #e2e8f0;
+            --highlight-bg: #92400e;
+            --accent-color: #22d3ee;
+            --link-color: #60a5fa;
         }
 
         * {
@@ -249,6 +253,7 @@
             border-radius: 0.75rem;
             padding: 2rem;
             box-shadow: var(--shadow-md);
+            min-height: 100vh;
         }
 
         .section {
@@ -288,7 +293,7 @@
             gap: 1rem;
             margin-bottom: 1.5rem;
             padding: 1.25rem;
-            background-color: var(--bg-primary);
+            background-color: var(--bg-tertiary);
             border-radius: 0.5rem;
             border-left: 4px solid var(--accent-color);
         }
@@ -319,6 +324,8 @@
         .speaker-text {
             color: var(--text-primary);
             line-height: 1.7;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .highlight {
@@ -351,6 +358,20 @@
         li {
             margin-bottom: 0.5rem;
             color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--link-color);
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            opacity: 0.8;
         }
 
         code {
@@ -500,10 +521,24 @@
             .speaker {
                 flex-direction: column;
                 gap: 0.75rem;
+                padding: 1rem;
             }
 
             .transcript {
                 padding: 1rem;
+            }
+
+            .section {
+                margin-bottom: 2rem;
+            }
+
+            .info-box {
+                padding: 1rem;
+            }
+
+            code {
+                font-size: 0.85em;
+                word-break: break-word;
             }
         }
 

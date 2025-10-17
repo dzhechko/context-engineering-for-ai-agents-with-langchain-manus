@@ -265,28 +265,38 @@ hintText.textContent = 'Ctrl/Cmd + K для поиска, Ctrl/Cmd + D для с
 searchBox.style.position = 'relative';
 searchBox.appendChild(hintText);
 
-// Lazy load animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+// Lazy load animations (only for desktop)
+const isDesktop = window.innerWidth > 768;
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+if (isDesktop) {
+    const observerOptions = {
+        threshold: 0.05,
+        rootMargin: '0px 0px -20px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe sections for animation
+    sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
     });
-}, observerOptions);
-
-// Observe sections for animation
-sections.forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
-});
+} else {
+    // On mobile, show all sections immediately
+    sections.forEach(section => {
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0)';
+    });
+}
 
 // Add copy button to code blocks
 const codeBlocks = document.querySelectorAll('pre code');
