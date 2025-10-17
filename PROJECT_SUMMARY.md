@@ -285,7 +285,7 @@ app.js:      11 KB (несжатый) → ~3 KB (gzip)
 
 - **Автор транскрипта:** https://t.me/llm_notes
 - **LangChain:** https://www.langchain.com/
-- **Manus:** https://www.manus.app/
+- **Manus:** https://www.manus.im/app
 - **GitHub Pages Docs:** https://docs.github.com/pages
 - **Git Tutorial:** https://git-scm.com/book/ru/v2
 

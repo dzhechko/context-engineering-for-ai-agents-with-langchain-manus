@@ -132,7 +132,7 @@ npx http-server
 ### Связанные ресурсы:
 - [📱 Telegram канал Дмитрия Жечкова](https://t.me/llm_notes)
 - [🔗 LangChain](https://www.langchain.com/)
-- [🔗 Manus](https://www.manus.app/)
+- [🔗 Manus](https://www.manus.im/app)
 
 ## 🤝 Вклад
 
