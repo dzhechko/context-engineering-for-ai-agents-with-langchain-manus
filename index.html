@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Контекстная инженерия для AI-агентов с LangChain и Manus. Подробный транскрипт вебинара о современных подходах к управлению контекстом в AI-агентах.">
+    <meta name="keywords" content="AI, LangChain, Manus, контекстная инженерия, AI-агенты, промпт-инженерия, машинное обучение">
+    <meta name="author" content="Дмитрий Жечков">
+    <meta property="og:title" content="Контекстная инженерия для AI-агентов с LangChain и Manus">
+    <meta property="og:description" content="Подробный транскрипт вебинара о современных подходах к управлению контекстом в AI-агентах">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="ru_RU">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Контекстная инженерия для AI-агентов">
+    <meta name="twitter:description" content="Подробный транскрипт вебинара о современных подходах к управлению контекстом в AI-агентах">
+    
+    <title>Контекстная инженерия для AI-агентов | LangChain & Manus</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --accent-color: #06b6d4;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --highlight-bg: #fef3c7;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --border-color: #4b5563;
+            --code-bg: #0f172a;
+            --highlight-bg: #713f12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
+            opacity: 0.95;
+            margin-top: 1rem;
+        }
+
+        .header-meta > div {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .controls {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .controls-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .nav-sidebar {
+            position: sticky;
+            top: 140px;
+            background-color: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+
+        .nav-sidebar h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .transcript {
+            background-color: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 150px;
+        }
+
+        .section h2 {
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section h3 {
+            font-size: 1.35rem;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section h4 {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        .speaker {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            background-color: var(--bg-primary);
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .speaker-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .speaker-content {
+            flex: 1;
+        }
+
+        .speaker-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .speaker-text {
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .highlight {
+            background-color: var(--highlight-bg);
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            border-left: 4px solid var(--primary-color);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        code {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        .footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .controls-content {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .transcript {
+                padding: 1.5rem;
+            }
+
+            .back-to-top {
+                bottom: 1rem;
+                right: 1rem;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .section h2 {
+                font-size: 1.35rem;
+            }
+
+            .section h3 {
+                font-size: 1.15rem;
+            }
+
+            .speaker {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .transcript {
+                padding: 1rem;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .header, .controls, .nav-sidebar, .back-to-top, .footer {
+                display: none;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .transcript {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <header class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-brain"></i> Контекстная инженерия для AI-агентов с LangChain и Manus</h1>
+            <div class="header-meta">
+                <div>
+                    <i class="fas fa-user"></i>
+                    <span>Подготовил: <a href="https://t.me/llm_notes" style="color: white; text-decoration: underline;" target="_blank">Дмитрий Жечков</a></span>
+                </div>
+                <div>
+                    <i class="fas fa-calendar"></i>
+                    <span>16.10.2025</span>
+                </div>
+                <div>
+                    <i class="fas fa-video"></i>
+                    <span>Транскрипт вебинара</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="controls">
+        <div class="controls-content">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Поиск по транскрипту...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="btn-group">
+                <button class="btn" id="darkModeToggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Темная тема</span>
+                </button>
+                <button class="btn" id="printBtn">
+                    <i class="fas fa-print"></i>
+                    <span>Печать</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-grid">
+            <aside class="nav-sidebar">
+                <h3><i class="fas fa-list"></i> Навигация</h3>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#intro">Введение</a></li>
+                    <li><a href="#context-engineering">Контекстная инженерия</a></li>
+                    <li><a href="#approaches">Основные подходы</a></li>
+                    <li><a href="#manus-presentation">Презентация Manus</a></li>
+                    <li><a href="#fresh-lessons">Свежие уроки</a></li>
+                    <li><a href="#context-reduction">Сокращение контекста</a></li>
+                    <li><a href="#context-isolation">Изоляция контекста</a></li>
+                    <li><a href="#context-offloading">Выгрузка контекста</a></li>
+                    <li><a href="#balance">Баланс измерений</a></li>
+                    <li><a href="#qa">Вопросы и ответы</a></li>
+                </ul>
+            </aside>
+
+            <main class="transcript">
+                <section class="section" id="intro">
+                    <h2><i class="fas fa-handshake"></i> Введение</h2>
+                    
+                    <div class="speaker">
+                        <div class="speaker-icon">L</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Лэнс (LangChain)</div>
+                            <div class="speaker-text">
+                                Добро пожаловать всем участникам! Давайте начнем вебинар, участники продолжают подключаться. Меня зовут Лэнс, я один из основателей-инженеров в LangChain. Со мной Пит из Manus. Пит, не могли бы вы кратко представиться?
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Привет всем! Я соучредитель и главный научный сотрудник Manus. В основном я разработал агентский фреймворк и многие компоненты в Manus. Очень рад быть здесь сегодня. Спасибо, Лэнс, за приглашение.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="speaker">
+                        <div class="speaker-icon">L</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Лэнс (LangChain)</div>
+                            <div class="speaker-text">
+                                Мы очень рады провести этот вебинар, потому что Manus - действительно крутой продукт, которым я пользуюсь уже давно. Но также они опубликовали отличную статью о контекстной инженерии несколько месяцев назад, которая сильно повлияла на меня.
+                                <br><br>
+                                Я дам краткий обзор контекстной инженерии, как я ее понимаю, сошлюсь на их статью, а затем Пит представит презентацию с новыми идеями, не освещенными в статье. Если вы уже читали статью, мы рассмотрим новые вещи, что должно быть довольно интересно.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" id="context-engineering">
+                    <h2><i class="fas fa-cogs"></i> Введение в контекстную инженерию</h2>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-lightbulb"></i> Что такое контекстная инженерия?</div>
+                        <p>Возможно, вы слышали термин "контекстная инженерия" - он появился в этом году. Если посмотреть на тренды Google поиска, промпт-инженерия началась после ChatGPT в декабре 2022 года. Контекстная инженерия появилась в этом году примерно в мае и соответствует идее "года агентов".</p>
+                    </div>
+
+                    <h3><i class="fas fa-question-circle"></i> Почему это важно?</h3>
+                    <p>Одна из вещей, которую наблюдают люди, создающие агентов - контекст растет, и растет очень специфическим образом. Когда вы создаете агента, у вас есть LLM, связанная с некоторым количеством инструментов. LLM может вызывать инструменты автономно в цикле.</p>
+                    
+                    <p>Проблема в том, что для каждого вызова инструмента вы получаете наблюдение от инструмента, которое добавляется в список чата. Эти сообщения растут со временем, и вы можете получить неограниченный взрыв сообщений по мере работы агентов.</p>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-chart-line"></i> Масштаб проблемы</div>
+                        <ul>
+                            <li>Manus: типичные задачи требуют около <strong>50 вызовов инструментов</strong></li>
+                            <li>Anthropic: продакшн-агенты могут участвовать в разговорах, охватывающих <strong>сотни ходов</strong></li>
+                        </ul>
+                    </div>
+
+                    <h3><i class="fas fa-exclamation-triangle"></i> Парадокс контекста</h3>
+                    <p>Проблема в том, что агенты накапливают большое количество контекста через вызовы инструментов, но мы знаем, что производительность падает по мере роста контекста. Это парадокс: агенты используют много контекста из-за вызовов инструментов, но производительность падает по мере роста контекста.</p>
+                    
+                    <p>Карпати ввел этот термин в Twitter в начале года. Контекстную инженерию можно рассматривать как <strong>"деликатное искусство и науку заполнения контекстного окна именно той информацией, которая нужна для следующего шага"</strong>.</p>
+                </section>
+
+                <section class="section" id="approaches">
+                    <h2><i class="fas fa-tools"></i> Основные подходы к контекстной инженерии</h2>
+
+                    <h3><i class="fas fa-upload"></i> 1. Выгрузка контекста (Context Offloading)</h3>
+                    <p><strong>Центральная идея:</strong> не весь контекст должен жить в истории сообщений вашего агента. Вы можете взять информацию и выгрузить ее, отправить куда-то еще, чтобы она была вне контекстного окна, но могла быть извлечена.</p>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-folder"></i> Использование файловой системы</div>
+                        <p>Одна из самых популярных идей - использование файловой системы. Возьмите вывод сообщения инструмента, сохраните его в файловой системе, отправьте агенту только минимальную информацию, необходимую для ссылки на полный контекст при необходимости.</p>
+                        <p><strong>Используется в:</strong> Manus, Deep Agents, Open Deep Research, Claude Code, долгоработающие агенты</p>
+                    </div>
+
+                    <h3><i class="fas fa-compress"></i> 2. Сокращение контекста (Context Reduction)</h3>
+                    <p>Похоже на выгрузку, но вместо этого вы суммируете или сжимаете информацию:</p>
+                    <ul>
+                        <li>Суммирование выводов вызовов инструментов</li>
+                        <li>Обрезка вызовов инструментов или сообщений инструментов</li>
+                        <li>Claude 4.5 теперь поддерживает это из коробки</li>
+                        <li>Суммирование полной истории сообщений</li>
+                        <li>Сжатие при передаче между агентами</li>
+                    </ul>
+
+                    <h3><i class="fas fa-search"></i> 3. Извлечение контекста (Context Retrieval)</h3>
+                    <p>Классические дебаты о правильном подходе для извлечения контекста:</p>
+                    <ul>
+                        <li><strong>Cursor:</strong> использует индексирование и семантический поиск, а также простые файловые инструменты поиска</li>
+                        <li><strong>Claude Code:</strong> использует только файловую систему и простые инструменты поиска</li>
+                    </ul>
+
+                    <h3><i class="fas fa-layer-group"></i> 4. Изоляция контекста (Context Isolation)</h3>
+                    <p>Разделение контекста между мульти-агентами. Каждый под-агент имеет свое контекстное окно, что позволяет разделить ответственность.</p>
+
+                    <h3><i class="fas fa-database"></i> 5. Кэширование контекста</h3>
+                    <p>Manus много говорит об этом - очень интересный трюк для оптимизации производительности и снижения затрат.</p>
+                </section>
+
+                <section class="section" id="manus-presentation">
+                    <h2><i class="fas fa-presentation"></i> Презентация Пита (Manus)</h2>
+                    
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Спасибо, Лэнс! Я очень рад поделиться свежими уроками контекстной инженерии, которые мы извлекли при создании Manus.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" id="fresh-lessons">
+                    <h2><i class="fas fa-graduation-cap"></i> Свежие уроки контекстной инженерии</h2>
+
+                    <p>Я говорю "свежие уроки", потому что понял, что последний блог-пост о контекстной инженерии я написал в июле, а июль в году агентов - это практически прошлая эра. Сегодня я хочу углубиться в области, которые либо недостаточно глубоко рассмотрел раньше, либо вообще не затрагивал.</p>
+
+                    <h3><i class="fas fa-question"></i> Почему нужна контекстная инженерия?</h3>
+                    <p>Особенно когда файн-тюнинг или пост-тренинг моделей стал более доступным сегодня. Например, команда Thinking Machine выпустила Tinker API с отличным дизайном.</p>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-history"></i> Болезненные уроки из опыта</div>
+                        <p>До создания Manus я уже провел более 10 лет в обработке естественного языка (NLP). Manus - моя вторая или третья компания, и в предыдущем стартапе мы обучали собственную языковую модель с нуля для извлечения информации из открытых доменов и построения графов знаний.</p>
+                        <p><strong>Это было болезненно.</strong> Скорость инноваций нашего продукта была полностью ограничена скоростью итераций модели. Даже тогда модели были намного меньше по сравнению с сегодняшними, но один цикл обучения плюс оценка мог занять одну-две недели.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-check-circle"></i> Главный урок</div>
+                        <p><strong>Вместо создания специализированных моделей слишком рано, стартапы должны полагаться на общие модели и контекстную инженерию как можно дольше.</strong></p>
+                        <p>По мере созревания продукта и усиления базовых моделей с открытым исходным кодом, очень заманчиво думать: "Может, мне стоит взять сильную базовую модель, дообучить ее на моих данных и сделать действительно хорошей для моего случая использования?"</p>
+                        <p>Мы тоже это пробовали. И знаете что? Это еще одна ловушка.</p>
+                    </div>
+
+                    <h4>Опасности раннего файн-тюнинга</h4>
+                    <p>Чтобы заставить это работать хорошо, вы обычно фиксируете пространство действий, разрабатываете награду вокруг текущего поведения продукта и генерируете тонны роллаутов и обратной связи.</p>
+                    <p>Но это опасно, потому что мы все еще в ранние дни ИИ и агентов. Все может измениться за ночь. Для нас классический пример - запуск MCP. Он полностью изменил дизайн Manus от компактного статического пространства действий к чему-то бесконечно расширяемому.</p>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-star"></i> Вывод</div>
+                        <p>Будьте тверды в том, где проводите границу. Прямо сейчас <strong>контекстная инженерия - это самая четкая и практичная граница между приложением и моделью</strong>.</p>
+                    </div>
+                </section>
+
+                <section class="section" id="context-reduction">
+                    <h2><i class="fas fa-compress-arrows-alt"></i> Сокращение контекста: Компактизация vs Суммирование</h2>
+
+                    <p>В Manus мы разделяем операции сокращения на два типа: <strong>компактизация</strong> и <strong>суммирование</strong>.</p>
+
+                    <h3><i class="fas fa-boxes"></i> Компактизация</h3>
+                    <p>Для каждого вызова инструмента и результата инструмента у нас есть два формата: полный и компактный. Компактная версия убирает любую информацию, которая может быть восстановлена из файловой системы или внешнего состояния.</p>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-example"></i> Пример компактизации</div>
+                        <p>Инструмент записи в файл имеет поля <code>path</code> и <code>content</code>. После возврата инструмента файл уже существует в среде. В компактном формате мы можем безопасно убрать длинное поле <code>content</code> и оставить только <code>path</code>. Если агент достаточно умен, он может просто извлечь файл по пути при необходимости.</p>
+                    </div>
+
+                    <p>Мы считаем такую <strong>обратимость критически важной</strong>, потому что агенты делают цепочки предсказаний на основе предыдущих действий и наблюдений. Никогда не знаешь, какое прошлое действие внезапно станет важным через 10 шагов.</p>
+
+                    <h3><i class="fas fa-file-alt"></i> Суммирование</h3>
+                    <p>Компактизация может завести только до определенного момента. В конце концов контекст все равно будет расти и достигнет потолка. Тогда мы комбинируем компактизацию с традиционным суммированием, но делаем это очень осторожно.</p>
+
+                    <ul>
+                        <li>Перед суммированием мы можем выгрузить ключевые части контекста в файлы</li>
+                        <li>Иногда мы даже более агрессивно сохраняем весь пре-суммарный контекст как текстовый файл в файловую систему, чтобы всегда можно было его восстановить</li>
+                    </ul>
+
+                    <h3><i class="fas fa-sliders-h"></i> Управление порогами</h3>
+                    <p>Мы отслеживаем пороги длины контекста:</p>
+                    <ul>
+                        <li><strong>Жесткий лимит модели</strong> (например, 1 миллион токенов)</li>
+                        <li><strong>Практический порог деградации</strong> (обычно 128K-200K токенов)</li>
+                    </ul>
+
+                    <p>Когда размер контекста приближается к порогу деградации, мы запускаем сокращение контекста, начиная с компактизации, а не суммирования. Мы можем компактизировать старейшие 50% вызовов инструментов, сохраняя новые в полной детализации, чтобы модель имела свежие примеры правильного использования инструментов.</p>
+                </section>
+
+                <section class="section" id="context-isolation">
+                    <h2><i class="fas fa-shield-alt"></i> Изоляция контекста: Коммуникация vs Разделение памяти</h2>
+
+                    <p>Я согласен с блогом Cognition, где они предупреждают против использования мульти-агентских настроек, потому что синхронизация информации между ними становится кошмаром. Но это не новая проблема - координация многопроцессности была классическим вызовом в ранние дни программирования.</p>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-quote-left"></i> Цитата из сообщества Go</div>
+                        <p>"Не общайтесь через разделение памяти, вместо этого разделяйте память через общение"</p>
+                        <p><em>Переводя термин "память" в "контекст", мы видим два паттерна:</em></p>
+                    </div>
+
+                    <h3><i class="fas fa-comments"></i> Паттерн коммуникации</h3>
+                    <p>Классическая настройка под-агентов. Главный агент пишет промпт, который отправляется под-агенту, и весь контекст под-агента состоит только из этой инструкции.</p>
+                    <p><strong>Когда использовать:</strong> Если задача имеет короткую, четкую инструкцию и важен только финальный результат (например, поиск в кодовой базе конкретного фрагмента).</p>
+
+                    <h3><i class="fas fa-share-alt"></i> Паттерн разделения памяти</h3>
+                    <p>Под-агент может видеть весь предыдущий контекст - всю историю использования инструментов, но имеет свой собственный системный промпт и пространство действий.</p>
+                    <p><strong>Когда использовать:</strong> Для сложных сценариев, где финальный отчет зависит от множества промежуточных поисков и заметок (например, глубокое исследование).</p>
+                    <p><strong>Компромисс:</strong> Разделение контекста дорого, потому что каждый под-агент имеет больший ввод для предзаполнения, и поскольку системный промпт и пространство доступа отличаются, вы не можете переиспользовать KV-кэш.</p>
+                </section>
+
+                <section class="section" id="context-offloading">
+                    <h2><i class="fas fa-server"></i> Выгрузка контекста: Многоуровневое пространство действий</h2>
+
+                    <p>Когда люди говорят о выгрузке, они обычно имеют в виду перемещение частей рабочего контекста во внешние файлы. Но по мере роста системы, особенно при интеграции MCP, вы понимаете, что сами инструменты тоже могут занимать много контекста.</p>
+
+                    <p>Слишком много инструментов в контексте приводит к путанице - модель может вызывать неправильные или несуществующие инструменты.</p>
+
+                    <h3><i class="fas fa-sitemap"></i> Многоуровневое пространство действий в Manus</h3>
+
+                    <h4>Уровень 1: Вызов функций</h4>
+                    <p>Классический подход. Схемно-безопасный благодаря ограниченному декодированию, но имеет недостатки:</p>
+                    <ul>
+                        <li>Нарушение кэша</li>
+                        <li>Слишком много инструментов может вызвать путаницу</li>
+                    </ul>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-wrench"></i> В Manus используются только атомарные функции</div>
+                        <ul>
+                            <li>Чтение и запись файлов</li>
+                            <li>Выполнение shell-команд</li>
+                            <li>Поиск файлов в интернете</li>
+                            <li>Операции браузера</li>
+                        </ul>
+                    </div>
+
+                    <h4>Уровень 2: Утилиты песочницы</h4>
+                    <p>Каждая сессия Manus работает в полной виртуальной машине-песочнице на нашей кастомизированной Linux-системе. Manus может использовать shell-команды для запуска предустановленных утилит:</p>
+                    <ul>
+                        <li>Конвертеры форматов</li>
+                        <li>Утилиты распознавания речи</li>
+                        <li>MCP CLI для вызова MCP</li>
+                    </ul>
+
+                    <p><strong>Преимущества:</strong></p>
+                    <ul>
+                        <li>Можно добавлять новые возможности без изменения пространства вызова функций</li>
+                        <li>Большие выводы могут записываться в файлы</li>
+                        <li>Можно использовать Linux-инструменты для обработки результатов</li>
+                    </ul>
+
+                    <h4>Уровень 3: Пакеты и API</h4>
+                    <p>Manus может писать Python-скрипты для вызова предавторизованных API или кастомных пакетов:</p>
+                    <ul>
+                        <li>3D-дизайн библиотеки</li>
+                        <li>Финансовые API для рыночных данных</li>
+                        <li>Мы покупаем все эти API от имени пользователя</li>
+                    </ul>
+
+                    <p><strong>Преимущества:</strong></p>
+                    <ul>
+                        <li>Идеально для задач, требующих много вычислений в памяти</li>
+                        <li>Код и API очень композитны</li>
+                        <li>Можно объединять много вещей в один шаг</li>
+                    </ul>
+
+                    <p><strong>Недостатки:</strong></p>
+                    <ul>
+                        <li>Не схемно-безопасно</li>
+                        <li>Очень сложно делать ограниченное декодирование</li>
+                    </ul>
+                </section>
+
+                <section class="section" id="balance">
+                    <h2><i class="fas fa-balance-scale"></i> Баланс пяти измерений</h2>
+
+                    <p>Выгрузка, сокращение, извлечение, изоляция и кэширование не независимы:</p>
+                    <ul>
+                        <li>Выгрузка и извлечение обеспечивают более эффективное сокращение</li>
+                        <li>Стабильное извлечение делает изоляцию безопасной</li>
+                        <li>Изоляция замедляет контакты и снижает частоту сокращения</li>
+                        <li>Больше изоляции и сокращения влияет на эффективность кэша и качество вывода</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-flask"></i> Контекстная инженерия - это наука и искусство</div>
+                        <p>Контекстная инженерия требует идеального баланса между множественными потенциально конфликтующими целями.</p>
+                    </div>
+
+                    <h3><i class="fas fa-exclamation-circle"></i> Избегайте чрезмерной контекстной инженерии</h3>
+                    <p>Оглядываясь на прошедшие 6-7 месяцев с запуска Manus, самые большие скачки не пришли от добавления более сложных слоев управления контекстом или умных хаков извлечения. Они пришли от упрощения или удаления ненужных трюков и большего доверия модели.</p>
+                    <p>Каждый раз, когда мы упрощали архитектуру, система становилась быстрее, стабильнее и умнее. Цель контекстной инженерии - сделать работу модели проще, а не сложнее.</p>
+
+                    <div class="info-box">
+                        <div class="info-box-title"><i class="fas fa-bullseye"></i> Главный вывод</div>
+                        <p><strong>Стройте меньше и понимайте больше.</strong></p>
+                    </div>
+                </section>
+
+                <section class="section" id="qa">
+                    <h2><i class="fas fa-question-circle"></i> Сессия вопросов и ответов</h2>
+
+                    <h3><i class="fas fa-terminal"></i> Как LLM вызывает различные shell-инструменты?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Представьте, что вы человек, использующий новый компьютер. Если вы знаете Linux, все инструменты находятся в <code>/usr/bin</code>. Мы делаем две вещи:
+                                <br><br>
+                                1. У нас есть подсказка в системном промпте, говорящая Manus, что есть много предустановленных утилит командной строки в определенной папке<br>
+                                2. Для наиболее часто используемых мы уже включили их в системный промпт, но очень компактно - мы не говорим агенту, как использовать инструменты, только перечисляем их
+                                <br><br>
+                                Мы говорим агенту, что он может безопасно использовать флаг <code>--help</code>, потому что все утилиты разработаны нашей командой и имеют одинаковый формат.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-search-plus"></i> Используете ли вы индексирование?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                В Manus мы не используем индексные базы данных, потому что каждая песочница в сессии Manus новая, и пользователи хотят быстро взаимодействовать. У нас нет времени строить индекс на лету. Мы больше похожи на Claude Code - полагаемся на <code>grep</code> и <code>glob</code>.
+                                <br><br>
+                                Но если вы рассматриваете создание долгосрочной памяти или интеграцию корпоративной базы знаний, вам все равно придется полагаться на внешний векторный индекс. Это зависит от масштаба.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-memory"></i> Есть ли у вас понятие памяти между сессиями?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                В Manus у нас есть концепция "знания" - это своего рода явная память. Каждый раз, когда вы можете сказать Manus "запомни, что каждый раз, когда я прошу что-то, доставляй в Excel", это не автоматически вставляется в память. Появится диалог: "Вот что я узнал из нашего предыдущего разговора, хотите принять или отклонить?"
+                                <br><br>
+                                Мы также исследуем более автоматические способы. Интересная вещь в агентах - по сравнению с чат-ботами, пользователи часто исправляют агента. Например, при визуализации данных на китайском, японском или корейском часто возникают проблемы со шрифтами. Пользователь скажет: "Используй CJK-шрифт". Разные пользователи будут делать одинаковые исправления, и нам нужно найти способ использовать эту коллективную обратную связь.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-sync-alt"></i> Как вы подходите к рефакторингу архитектуры с улучшением моделей?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Мы уже рефакторили Manus пять раз с марта по октябрь. Модели не только улучшаются, но и меняются их поведение.
+                                <br><br>
+                                У нас есть внутренняя теория для оценки архитектуры агентов: мы фиксируем архитектуру агента и переключаемся между моделями. Если ваша архитектура может много выиграть от переключения с более слабой модели на более сильную, то ваша архитектура более устойчива к будущему.
+                                <br><br>
+                                Мы часто делаем такие проверки каждые 1-2 месяца, используя открытые модели и ранний доступ к проприетарным моделям для подготовки к следующему релизу.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-database"></i> Лучшие практики для форматов хранения данных?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Мы всегда приоритизируем форматы на основе строк, потому что это позволяет моделям использовать <code>grep</code> или читать из диапазона строк. Markdown иногда может вызывать проблемы - модели обучены хорошо использовать markdown, но иногда выводят слишком много маркированных списков. Мы предпочитаем обычный текст.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-file-alt"></i> Как промптить для хорошего суммирования?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Мы много пробовали оптимизировать промпт для суммирования, но оказалось, что простой подход работает хорошо: не используйте свободную форму промпта. Вместо этого определите схему - форму с полями, которые ИИ должен заполнить.
+                                <br><br>
+                                Например: "Вот файлы, которые я изменил", "Вот цель пользователя", "Вот где я остановился". Если использовать структурированную схему, вывод стабилен и можно итерировать.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-robot"></i> Выбор модели и использование открытых моделей?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Сейчас мы не используем открытые модели не из-за качества, а из-за стоимости. Мы часто думаем, что открытые модели могут снизить стоимость, но если вы в масштабе Manus и строите настоящего агента, где ввод намного длиннее вывода, KV-кэш очень важен.
+                                <br><br>
+                                Распределенный KV-кэш очень сложно реализовать с открытыми решениями. Если использовать передовых провайдеров LLM, у них более надежная инфраструктура для распределенного кэширования глобально.
+                                <br><br>
+                                Иногда, если посчитать, использование флагманских моделей может быть даже дешевле, чем открытые модели.
+                                <br><br>
+                                Сейчас мы используем не только Anthropic - модели Anthropic лучший выбор для агентских задач, но мы также видим прогресс в Gemini и OpenAI. Передовые лаборатории не сходятся в направлениях: для кодинга используйте Claude, для мультимодальности - Gemini, OpenAI отлично подходит для сложной математики и рассуждений.
+                                <br><br>
+                                Для компаний приложений, как мы, одно из наших преимуществ - мы не должны строить поверх только одной модели. Можно делать маршрутизацию на уровне задач или даже подзадач.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-tasks"></i> Планирование в Manus?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                В начале Manus использовал парадигму <code>todo.md</code> - это было глупо и тратило много ходов. Треть действий была об обновлении списка дел.
+                                <br><br>
+                                Сейчас мы используем более структурированное планирование. Есть планировщик внизу системы - отдельный агент, управляющий планом, используя парадигму "агент как инструмент". Очень важно иметь отдельного агента с другой перспективой для внешнего обзора. Можно использовать разные модели для планирования.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-shield-alt"></i> Гарантии безопасности?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                Это очень чувствительный вопрос. Если у вас песочница, подключенная к интернету, все опасно. Мы вложили много усилий в ограждения - не позволяем информации выходить из песочницы.
+                                <br><br>
+                                У нас есть проверки исходящего трафика, чтобы токены не выходили из песочницы. У нас есть браузер внутри Manus, что очень сложно - содержимое веб-страницы может быть вредоносным.
+                                <br><br>
+                                Сейчас в Manus каждый раз при выполнении чувствительных операций требуется ручное подтверждение. Это прогрессивный подход - пока ограждения в самой модели не улучшатся, мы позволяем пользователю чаще брать управление на себя.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i class="fas fa-chart-bar"></i> Подход к оценкам (evals)?</h3>
+                    <div class="speaker">
+                        <div class="speaker-icon">П</div>
+                        <div class="speaker-content">
+                            <div class="speaker-name">Пит (Manus)</div>
+                            <div class="speaker-text">
+                                В начале запуска Manus мы использовали публичные академические бенчмарки как GAIA, но обнаружили, что это очень не согласуется - модели с высокими баллами на GAIA пользователям не нравились.
+                                <br><br>
+                                Сейчас у нас три вида оценок:
+                                <br><br>
+                                <strong>1. Самое важное:</strong> Для каждой завершенной сессии мы просим пользователя дать обратную связь от 1 до 5 звезд. Это золотой стандарт.
+                                <br><br>
+                                <strong>2. Автоматизированные тесты</strong> с проверяемыми результатами. Мы создали собственный датасет с четкими ответами, сосредоточенный на выполнении, потому что большинство бенчмарков сосредоточены на задачах рассуждения.
+                                <br><br>
+                                <strong>3. Человеческие оценщики</strong> - много стажеров для оценки вещей как генерация веб-сайтов или визуализация данных, потому что очень сложно создать хорошую модель вознаграждения, которая знает, визуально ли привлекателен вывод.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 2rem;">
+                        <div class="info-box-title"><i class="fas fa-check-circle"></i> Завершение</div>
+                        <div class="speaker">
+                            <div class="speaker-icon">L</div>
+                            <div class="speaker-content">
+                                <div class="speaker-name">Лэнс (LangChain)</div>
+                                <div class="speaker-text">
+                                    Отличная сессия! Спасибо всем за участие. Запись и слайды будут доступны.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="speaker">
+                            <div class="speaker-icon">П</div>
+                            <div class="speaker-content">
+                                <div class="speaker-name">Пит (Manus)</div>
+                                <div class="speaker-text">
+                                    Спасибо всем! Попробуйте Manus - у нас есть бесплатный тариф.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://t.me/llm_notes" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
+                <a href="https://www.langchain.com/" target="_blank"><i class="fas fa-link"></i> LangChain</a>
+                <a href="https://www.manus.app/" target="_blank"><i class="fas fa-link"></i> Manus</a>
+                <a href="#" id="shareBtn"><i class="fas fa-share-alt"></i> Поделиться</a>
+            </div>
+            <p style="margin-top: 1rem; color: var(--text-secondary);">
+                © 2025 Транскрипт подготовлен <a href="https://t.me/llm_notes" style="color: var(--primary-color);" target="_blank">Дмитрием Жечковым</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
