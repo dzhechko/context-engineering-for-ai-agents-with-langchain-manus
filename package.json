@@ -1,0 +1,20 @@
+{
+  "name": "ai-context-engineering-transcript",
+  "version": "1.0.0",
+  "description": "Interactive transcript website for AI Context Engineering webinar with LangChain and Manus",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "echo \"Open index.html in your browser\""
+  },
+  "keywords": [
+    "AI",
+    "LangChain",
+    "Manus",
+    "context-engineering",
+    "transcript",
+    "webinar"
+  ],
+  "author": "Dmitry Zhechkov",
+  "license": "MIT"
+}
