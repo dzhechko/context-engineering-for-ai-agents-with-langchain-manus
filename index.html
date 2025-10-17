@@ -77,11 +77,17 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            transition: padding 0.3s ease, transform 0.3s ease;
+        }
+
+        .header.collapsed {
+            padding: 0.75rem 1rem;
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
         }
 
         .header h1 {
@@ -89,6 +95,12 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
             line-height: 1.2;
+            transition: font-size 0.3s ease, margin 0.3s ease;
+        }
+
+        .header.collapsed h1 {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin-bottom: 0;
         }
 
         .header-meta {
@@ -99,12 +111,57 @@
             font-size: 0.9rem;
             opacity: 0.95;
             margin-top: 1rem;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+        }
+
+        .header.collapsed .header-meta {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
         }
 
         .header-meta > div {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .header-toggle {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: background 0.3s ease, transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .header-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-toggle:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .header-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .header.collapsed .header-toggle i {
+            transform: rotate(180deg);
         }
 
         .controls {
@@ -491,6 +548,11 @@
 
             .header h1 {
                 font-size: 1.5rem;
+                padding-right: 50px;
+            }
+
+            .header-toggle {
+                display: flex;
             }
 
             .transcript {
@@ -562,8 +624,11 @@
 <body>
     <div class="progress-bar" id="progressBar"></div>
 
-    <header class="header">
+    <header class="header" id="mainHeader">
         <div class="header-content">
+            <button class="header-toggle" id="headerToggle" aria-label="Свернуть/развернуть шапку">
+                <i class="fas fa-chevron-up"></i>
+            </button>
             <h1><i class="fas fa-brain"></i> Контекстная инженерия для AI-агентов с LangChain и Manus</h1>
             <div class="header-meta">
                 <div>

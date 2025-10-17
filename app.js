@@ -31,6 +31,45 @@ function updateDarkModeButton(theme) {
     }
 }
 
+// Header Toggle (collapse/expand on mobile)
+const headerToggle = document.getElementById('headerToggle');
+const mainHeader = document.getElementById('mainHeader');
+
+// Check for saved header state or default to expanded
+const headerCollapsed = localStorage.getItem('headerCollapsed') === 'true';
+if (headerCollapsed) {
+    mainHeader.classList.add('collapsed');
+}
+
+headerToggle.addEventListener('click', () => {
+    mainHeader.classList.toggle('collapsed');
+    const isCollapsed = mainHeader.classList.contains('collapsed');
+    localStorage.setItem('headerCollapsed', isCollapsed);
+});
+
+// Auto-collapse header on scroll down, expand on scroll up (mobile only)
+let lastScrollTop = 0;
+const isMobile = window.innerWidth <= 968;
+
+if (isMobile) {
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Only auto-collapse after scrolling down 100px
+        if (scrollTop > 100) {
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down - collapse
+                mainHeader.classList.add('collapsed');
+            } else {
+                // Scrolling up - expand
+                mainHeader.classList.remove('collapsed');
+            }
+        }
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, false);
+}
+
 // Search Functionality
 const searchInput = document.getElementById('searchInput');
 const transcript = document.querySelector('.transcript');
