@@ -124,9 +124,15 @@ npx http-server
 
 ## 🔗 Полезные ссылки
 
-- [Telegram канал Дмитрия Жечкова](https://t.me/llm_notes)
-- [LangChain](https://www.langchain.com/)
-- [Manus](https://www.manus.app/)
+### Исходные материалы вебинара:
+- [🎥 Видео вебинара на YouTube](https://www.youtube.com/watch?v=6_BcCthVvb8)
+- [📊 Слайды презентации Lance Martin (LangChain)](https://docs.google.com/presentation/d/16aaXLu40GugY-kOpqDU4e-S0hD1FmHcNyF0rRRnb1OU/edit?slide=id.p#slide=id.p)
+- [📊 Слайды презентации Yichao "Peak" Ji (Manus)](https://drive.google.com/file/d/1QGJ-BrdiTGslS71sYH4OJoidsry3Ps9g/view)
+
+### Связанные ресурсы:
+- [📱 Telegram канал Дмитрия Жечкова](https://t.me/llm_notes)
+- [🔗 LangChain](https://www.langchain.com/)
+- [🔗 Manus](https://www.manus.app/)
 
 ## 🤝 Вклад
 
